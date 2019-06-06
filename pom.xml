@@ -7,7 +7,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.axellience</groupId>
   <artifactId>vue-gwt-demo</artifactId>
-  <packaging>gwt-app</packaging>
+  <packaging>war</packaging>
   <version>1.0-beta-10-SNAPSHOT</version>
   <name>Vue GWT demo project</name>
 
@@ -35,15 +35,21 @@
       <optional>true</optional>
     </dependency>
 
+    <!--<dependency>-->
+      <!--<groupId>com.google.gwt</groupId>-->
+      <!--<artifactId>gwt-user</artifactId>-->
+      <!--<version>${gwt.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>com.google.gwt</groupId>-->
+      <!--<artifactId>gwt-dev</artifactId>-->
+      <!--<version>${gwt.version}</version>-->
+    <!--</dependency>-->
+
     <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
-      <version>${gwt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-dev</artifactId>
-      <version>${gwt.version}</version>
+      <groupId>com.vertispan.jsinterop</groupId>
+      <artifactId>base</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
@@ -52,6 +58,27 @@
       <id>ossrh</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </repository>
+    <repository>
+      <id>vertispan-gwt</id>
+      <name>Vertispan Snapshots</name>
+      <url>https://repo.vertispan.com/gwt-snapshot/</url>
+      <snapshots>
+        <enabled>true</enabled>
+        <!--<updatePolicy>always</updatePolicy>-->
+        <checksumPolicy>fail</checksumPolicy>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>vertispan-j2cl</id>
+      <name>Vertispan hosted artifacts-releases</name>
+      <url>https://repo.vertispan.com/j2cl</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
   </repositories>
 
   <build>
@@ -59,50 +86,26 @@
     <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes
     </outputDirectory>
 
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>net.ltgt.gwt.maven</groupId>
-          <artifactId>gwt-maven-plugin</artifactId>
-          <version>1.0-rc-9</version>
-          <extensions>true</extensions>
-          <configuration>
-            <skipModule>true</skipModule>
-            <failOnError>true</failOnError>
-            <compilerArgs>
-              <arg>-generateJsInteropExports</arg>
-              <arg>-XdisableUpdateCheck</arg>
-            </compilerArgs>
-            <useCompilerArgsForTests>true</useCompilerArgsForTests>
-            <codeserverArgs>
-              <arg>-generateJsInteropExports</arg>
-              <arg>-XdisableUpdateCheck</arg>
-              <arg>-bindAddress</arg>
-              <arg>0.0.0.0</arg>
-            </codeserverArgs>
-            <devmodeArgs>
-              <arg>-generateJsInteropExports</arg>
-              <arg>-XdisableUpdateCheck</arg>
-              <arg>-bindAddress</arg>
-              <arg>0.0.0.0</arg>
-            </devmodeArgs>
-            <style>OBFUSCATED</style> <!-- OBFUSCATED, PRETTY, or DETAILED -->
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
-      <!-- Maven Plugin for GWT -->
       <plugin>
-        <groupId>net.ltgt.gwt.maven</groupId>
-        <artifactId>gwt-maven-plugin</artifactId>
-        <!-- Plugin configuration. There are many available options, see
-          gwt-maven-plugin documentation at codehaus.org -->
+        <groupId>com.vertispan.j2cl</groupId>
+        <artifactId>j2cl-maven-plugin</artifactId>
+        <version>0.3-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>build</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
-          <moduleName>com.axellience.vuegwtdemo.VueGwtDemo</moduleName>
-          <startupUrls>
-            <url>VueGwtDemo</url>
-          </startupUrls>
+          <entrypoint>com.axellience.vuegwtdemo.client.VueGwtDemoApp</entrypoint>
+          <externs>
+            <extern>src/main/externs/vue-externs.js</extern>
+          </externs>
+          <initialScriptFilename>VueGwtDemo.nocache.js</initialScriptFilename>
+          <!--<compilationLevel>BUNDLE</compilationLevel>-->
         </configuration>
       </plugin>
 
